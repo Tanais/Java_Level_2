@@ -48,7 +48,6 @@ public class HomeWorkApp
 
         phoneBook.get("Иванов");
         phoneBook.get("Петров");
-
     }
 
 }
