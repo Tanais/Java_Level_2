@@ -20,14 +20,14 @@ public class PhoneBook {
             return phones;
         }
 
-        void getInfo(String name) {
+        void get(String name) {
             ArrayList<String> phones = getPhone(name);
             for (String phone : phones) {
                 System.out.println("Номер " + name + ": " + phone);
             }
         }
 
-        void putInfo(String name, String phone) {
+        void put(String name, String phone) {
             phonebook.put(phone, name);
         }
 }
