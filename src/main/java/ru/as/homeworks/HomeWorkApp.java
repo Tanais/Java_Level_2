@@ -13,7 +13,7 @@ public class HomeWorkApp
 
     public static void taskOne (){
         System.out.println("Задача номер 1");
-        String[] wordArray = new String[] {"Tost", "Vikadin", "Mail", "Tost", "Test", "Vasya", "Vikadin" , "Vikadin"};
+        String[] wordArray = new String[] {"Мурзик", "Барсик", "Батон", "Васька", "Батон", "Мурзик", "Ночь" , "Ночь"};
         String word;
         int count;
         HashMap<String,Integer> mapWords = new HashMap<>();
@@ -40,13 +40,14 @@ public class HomeWorkApp
         System.out.println("Задача номер 2");
         PhoneBook phoneBook = new PhoneBook();
 
-        phoneBook.put("Ivanov", "+51794112");
-        phoneBook.put("Vasilev", "+51511414");
-        phoneBook.put("Ivanov", "+5179411");
-        phoneBook.put("Petrov", "+5194112");
-        phoneBook.put("Ivanov", "+5194112");
+        phoneBook.put("Иванов", "+51794112");
+        phoneBook.put("Васильев", "+51511414");
+        phoneBook.put("Иванов", "+5179411");
+        phoneBook.put("Петрова", "+5194112");
+        phoneBook.put("Петров", "+5194112");
 
-        phoneBook.get("Ivanov");
+        phoneBook.get("Иванов");
+        phoneBook.get("Петров");
 
     }
 
