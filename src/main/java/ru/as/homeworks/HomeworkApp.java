@@ -1,35 +1,31 @@
 package ru.as.homeworks;
 
 
+import java.util.Arrays;
+
 public class HomeworkApp {
 
     private static final int size = 10000000;
     private static final int h = size / 2;
-    private static float[] arr = new float[size];
+    private static final float[] arr = new float[size];
 
 
     public static void main( String[] args )
     {
-        withOutThread();
-        dividedArray();
+        calculationArrayWithOutThread();
+        calculationArrayWithThread();
 
     }
 
-    public static void setArr() {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = 1;
-        }
-    }
-
-   public static void withOutThread (){
-        setArr();
+    public static void calculationArrayWithOutThread(){
+       Arrays.fill(arr, 1);
        long timeWork = System.currentTimeMillis();
        for (int i = 0; i < arr.length; i++) {
            arr[i] = (float)(arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
        }
-       System.out.println(System.currentTimeMillis() - timeWork);
-       System.out.println("Время без потока.");
-   }
+       System.out.printf("Время выполнения без потока - %s. \n", System.currentTimeMillis() - timeWork);
+
+    }
 
 
     static class threadA implements Runnable {
@@ -43,26 +39,26 @@ public class HomeworkApp {
 
         @Override
         public void run() {
-            final long timeCalculationArrayBefore = System.currentTimeMillis();
+            final long timeCalculationArrayStart = System.currentTimeMillis();
             for (int i = 0; i < arr.length; i++) {
                 arr[i] = (float) (arr[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
             }
-            final long timeCalculationArrayFinal = System.currentTimeMillis() - timeCalculationArrayBefore;
-            System.out.println("Время обработки формулы в массиве (поток " + threadNum + "): " + timeCalculationArrayFinal + " мс");
+            final long timeCalculationArrayFinish = System.currentTimeMillis() - timeCalculationArrayStart;
+            System.out.printf("Время подсчета - Поток %s Время %d \n", threadNum, timeCalculationArrayFinish);
         }
     }
 
-    private static void dividedArray() {
-        System.out.println("2. Обработка массива при помощи потоков:");
-        setArr();
-        final long timeDivideArrayBefore = System.currentTimeMillis();
+    private static void calculationArrayWithThread() {
+        Arrays.fill(arr, 1);
+        System.out.printf("\nВремя выполнения с разделением на потоки: \n");
+        final long timeDivideArrayStart = System.currentTimeMillis();
         final float[] a1 = new float[h];
         final float[] a2 = new float[h];
         System.arraycopy(arr, 0, a1, 0, h);
         System.arraycopy(arr, h, a2, 0, h);
 
-        final long timeDivideArrayFinal = System.currentTimeMillis() - timeDivideArrayBefore;
-        System.out.println("Время разделения массива: " + timeDivideArrayFinal + " мс");
+        final long timeDivideArrayFinish = System.currentTimeMillis() - timeDivideArrayStart;
+        System.out.printf("Время разделения массива на два - %s \n", timeDivideArrayFinish);
 
         Thread thread1 = new Thread(new threadA(a1, 1));
         Thread thread2 = new Thread(new threadA(a2, 2));
@@ -77,13 +73,13 @@ public class HomeworkApp {
             e.printStackTrace();
         }
 
-        final long timeJoinArrayBefore = System.currentTimeMillis();
+        final long timeJoinArrayStart = System.currentTimeMillis();
         System.arraycopy(a1, 0, arr, 0, h);
         System.arraycopy(a2, 0, arr, h, h);
-        final long timeJoinArrayAfter = System.currentTimeMillis() - timeJoinArrayBefore;
-        System.out.println("Время соединения массивов: " + timeJoinArrayAfter + " мс");
+        final long timeJoinArrayFinish = System.currentTimeMillis() - timeJoinArrayStart;
+        System.out.printf("Время объединения массивов - %s \n", timeJoinArrayFinish );
 
-        System.out.println("Время общее: " + (System.currentTimeMillis() - timeDivideArrayBefore) + " мс");
+        System.out.printf("Итоговое время - %s \n" , ((System.currentTimeMillis() - timeDivideArrayStart)) );
     }
 
 
