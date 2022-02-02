@@ -8,57 +8,78 @@ import java.util.Scanner;
 public class EchoServer {
 
     private Socket socket = null;
+    private ServerSocket serverSocket;
+    private DataInputStream in;
+    private DataOutputStream out;
+    private final Scanner scanner = new Scanner(System.in);
 
 
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
         new EchoServer();
     }
 
 
-    public EchoServer(){
+    public EchoServer() {
 
-       start();
+        start();
 
     }
 
 
-
-
-    private void start(){
-        try(ServerSocket serverSocket = new ServerSocket(8989)) {
-            System.out.println("Server start, waiting clients");
+    private void start() {
+        try {
+            serverSocket = new ServerSocket(8989);
             socket = serverSocket.accept();
             System.out.println("Client connected");
+            in = new DataInputStream(socket.getInputStream());
+            out = new DataOutputStream(socket.getOutputStream());
+            Thread sender = new Thread(new Runnable() {
+                String msg;
+                @Override
+                public void run() {
+                    while (true) {
+                        msg = scanner.nextLine();
+                        try {
+                            out.writeUTF("Server: " + msg);
+                            out.flush();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
-            final DataInputStream in = new DataInputStream(socket.getInputStream());
-            final DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            Scanner scanner = new Scanner(System.in);
-            String str;
-            while (true){
-                final String message = in.readUTF();
-                System.out.println(message);
-                if ("/end".equals(message)) {
-                    break;
+                    }
                 }
-                if (scanner.hasNext()) {
-                    str = scanner.nextLine();
-                    out.writeUTF(str);
-                    out.flush();
-                } else {
-                    out.writeUTF(message);
-                }
+            });
+            sender.start();
 
-            }
+            Thread echo = new Thread(new Runnable() {
+                String msg;
+                @Override
+                public void run() {
+
+                    while (true) {
+                        try {
+                            msg = in.readUTF();
+                            if ("/end".equals(msg)){
+                                out.close();
+                                in.close();
+                                socket.close();
+                                serverSocket.close();
+                                sender.interrupt();
+                            } else {
+                                System.out.println("Client: " + msg);
+                                out.writeUTF("Echo: " + msg);
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+            });
+            echo.start();
+
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        if (socket!=null) {
-            try {
-                socket.close();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
         }
 
     }
